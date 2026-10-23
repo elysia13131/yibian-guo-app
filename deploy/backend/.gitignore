@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Runtime data
+chroma_data/
+www/
+# update/*.zip 需要提交给 Zeabur 做热更新
+zvec_data/
+uploads/
+static/
+images/
+temp/
+_output/
+onnx_output/
+model_cache/
+*.db
+
+# Test
+test-project/
+tests/
+test_output.pdf
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Node (from ppt-master build)
+node_modules/
+package-lock.json
+package.json

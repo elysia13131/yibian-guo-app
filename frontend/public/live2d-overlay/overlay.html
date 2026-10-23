@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:transparent}
+canvas{display:block;position:absolute;bottom:0;left:50%;transform:translateX(-50%)}
+</style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@7.3.3/dist/pixi.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js"></script>
+<script src="live2dcubismcore.min.js"></script>
+<script>
+var app = null;
+var model = null;
+var currentModel = null;
+
+var MODEL_LIST = {
+  yinlang: {
+    path: '../live2d-model/yinlang/cat.model3.json',
+    scale: 0.6
+  }
+};
+
+window.Live2DBridge = {
+  load: function(name) {
+    if (app) { app.destroy(true, {children:true}); app = null; model = null; }
+    var cfg = MODEL_LIST[name] || MODEL_LIST.yinlang;
+    currentModel = name || 'yinlang';
+
+    app = new PIXI.Application({
+      width: window.innerWidth,
+      height: window.innerHeight,
+      backgroundAlpha: 0,
+      antialias: true,
+      resolution: window.devicePixelRatio || 1,
+      autoDensity: true
+    });
+    document.body.appendChild(app.view);
+
+    PIXI.live2d.Live2DModel.from(cfg.path).then(function(m) {
+      model = m;
+      model.anchor.set(0.5, 1);
+      model.scale.set(cfg.scale * (window.innerWidth / 400));
+      model.x = app.screen.width / 2;
+      model.y = app.screen.height;
+      app.stage.addChild(model);
+    }).catch(function(e) {
+      console.error('[Live2D Overlay] Model load error:', e);
+    });
+  },
+
+  setExpression: function(name) {
+    if (!model) return;
+    try { model.expression(name); } catch(e) { console.warn('[Overlay] setExpression:', e); }
+  },
+
+  startMotion: function(group, index) {
+    if (!model) return;
+    try {
+      var motions = Object.keys(model.internalModel.motionManager ? model.internalModel.motionManager.motions || {} : {});
+      if (motions.length > 0) model.motion(motions[0], index || 0);
+    } catch(e) { console.warn('[Overlay] startMotion:', e); }
+  },
+
+  unload: function() {
+    if (app) { app.destroy(true, {children:true}); app = null; model = null; }
+  }
+};
+
+window.addEventListener('resize', function() {
+  if (app && model && currentModel) {
+    app.renderer.resize(window.innerWidth, window.innerHeight);
+    var cfg = MODEL_LIST[currentModel] || MODEL_LIST.yinlang;
+    model.scale.set(cfg.scale * (window.innerWidth / 400));
+    model.x = app.screen.width / 2;
+    model.y = app.screen.height;
+  }
+});
+
+Live2DBridge.load('yinlang');
+</script>
+</body>
+</html>

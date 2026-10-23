@@ -1,0 +1,15 @@
+name = "rembg-service"
+region = "sgp1"
+
+[services.rembg]
+name = "rembg-service"
+source = "upload"
+type = "python"
+directory = "."
+
+[services.rembg.env]
+PORT = "8080"
+HF_ENDPOINT = "https://mirrors.cloud.tencent.com/huggingface/"
+
+[services.rembg.run]
+command = "python app/services/remove_bg_service.py 8080"

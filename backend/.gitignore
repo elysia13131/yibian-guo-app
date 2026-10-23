@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment
+.env
+.env.local
+.env.development
+.env.production
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+chroma_data/
+zvecdb/
+zvec_data/
+
+# Uploads
+uploads/
+
+# Logs
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug files (don't need to deploy)
+debug_*.py
+test_*.py
+analyze_*.py
+minimal_*.py
+migrate_*.py
+
+# Generated output files
+_output/
+
+# Model cache (default: model_cache/)
+model_cache/
+# Also ignore common cloud storage symlinks under model cache
+model_cache_*/

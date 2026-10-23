@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">一遍过</string>
+    <string name="title_activity_main">一遍过</string>
+    <string name="package_name">com.learning.platform</string>
+    <string name="custom_url_scheme">com.learning.platform</string>
+</resources>

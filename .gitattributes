@@ -1,0 +1,16 @@
+* text=auto eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.mp3 binary
+*.mp4 binary
+*.flac binary
+*.wav binary
+*.wasm binary
+*.jar binary
+*.pdf binary
+*.zip binary

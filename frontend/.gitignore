@@ -1,0 +1,32 @@
+node_modules/
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Capacitor generated (handled by android/.gitignore)
+android/.cxx/
+android/.gradle/
+android/build/
+android/captures/
+android/local.properties
+android/app/build/
+android/app/src/main/assets/public
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+android/app/src/main/res/xml/config.xml
+
+# Android Studio
+*.iml

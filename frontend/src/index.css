@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --scroll-progress: 0%;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.prose table th,
+.prose table td {
+  border: 1px solid #d1d5db;
+  padding: 8px 12px;
+}
+.prose table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-lg shadow-stone-200/20;
+  }
+  .glass-strong {
+    @apply bg-white/85 backdrop-blur-2xl border border-stone-100/80 shadow-xl shadow-stone-200/30;
+  }
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f2cf9e, #e59038, #d9741b);
+    width: var(--scroll-progress);
+    z-index: 100;
+    transition: width 0.1s linear;
+  }
+  .btn-primary {
+    @apply bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-xl
+           hover:from-amber-600 hover:to-orange-600 transition-all
+           shadow-lg shadow-amber-200/50 active:shadow-md active:scale-[0.98]
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-stone-100 text-stone-700 font-medium rounded-xl
+           hover:bg-stone-200 transition-all
+           active:scale-[0.98];
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #d4d4d4;
+    border-radius: 99px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #a8a29e;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes fadeInSlideDown {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

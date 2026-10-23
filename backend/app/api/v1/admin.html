@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理员控制台</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f7; color: #333; }
+.header { background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; padding: 20px 0; text-align: center; }
+.header h1 { font-size: 22px; font-weight: 600; }
+.header p { font-size: 13px; opacity: .8; margin-top: 4px; }
+.container { max-width: 900px; margin: 0 auto; padding: 20px; }
+.card { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,.08); margin-bottom: 20px; overflow: hidden; }
+.card-header { padding: 16px 20px; border-bottom: 1px solid #eee; font-size: 15px; font-weight: 600; color: #444; display: flex; align-items: center; gap: 8px; }
+.card-body { padding: 20px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #f0f0f0; }
+th { color: #666; font-weight: 600; font-size: 12px; text-transform: uppercase; }
+tr:hover td { background: #fafafa; }
+.btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; border: none; cursor: pointer; transition: all .15s; }
+.btn-primary { background: #667eea; color: #fff; }
+.btn-primary:hover { background: #5a6fd6; }
+.btn-danger { background: #e74c3c; color: #fff; }
+.btn-danger:hover { background: #c0392b; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 13px; font-weight: 500; color: #555; margin-bottom: 4px; }
+.form-group input, .form-group textarea { width: 100%; padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; outline: none; transition: border .15s; }
+.form-group input:focus, .form-group textarea:focus { border-color: #667eea; }
+.form-group textarea { resize: vertical; min-height: 60px; font-family: inherit; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tab-bar { display: flex; gap: 0; margin-bottom: 0; border-bottom: 2px solid #eee; }
+.tab { padding: 10px 20px; font-size: 13px; font-weight: 500; cursor: pointer; color: #888; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .15s; }
+.tab.active { color: #667eea; border-bottom-color: #667eea; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.empty { text-align: center; padding: 40px 0; color: #aaa; font-size: 14px; }
+.toast { position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; color: #fff; box-shadow: 0 4px 20px rgba(0,0,0,.15); transform: translateX(120%); transition: transform .3s; }
+.toast.show { transform: translateX(0); }
+.toast.success { background: #27ae60; }
+.toast.error { background: #e74c3c; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; background: #e8e8ed; color: #666; }
+.badge-success { background: #d4edda; color: #155724; }
+.upload-area { border: 2px dashed #ddd; border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; transition: all .15s; }
+.upload-area:hover { border-color: #667eea; background: #f8f9ff; }
+.upload-area p { color: #999; font-size: 13px; margin-top: 6px; }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 1000; display: none; align-items: center; justify-content: center; }
+.modal-overlay.show { display: flex; }
+.modal { background: #fff; border-radius: 16px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+.modal-header { padding: 16px 20px; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
+.modal-header h3 { font-size: 16px; font-weight: 600; }
+.modal-close { background: none; border: none; font-size: 22px; cursor: pointer; color: #999; padding: 0 4px; }
+.modal-close:hover { color: #333; }
+.modal-body { padding: 20px; }
+.modal-footer { padding: 12px 20px; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 8px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>⚙ 管理员控制台</h1>
+  <p>默认角色与背景音乐管理</p>
+</div>
+<div class="container">
+  <div class="tab-bar">
+    <div class="tab active" data-tab="characters">🎭 默认角色</div>
+    <div class="tab" data-tab="bgm">🎵 背景音乐</div>
+  </div>
+
+  <div id="tab-characters" class="tab-content active">
+    <div class="card">
+      <div class="card-header">📋 默认角色列表</div>
+      <div class="card-body" id="character-list">
+        <div class="empty">加载中...</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">➕ 添加默认角色</div>
+      <div class="card-body">
+        <div class="form-group">
+          <label>角色名称</label>
+          <input id="char-name" placeholder="如：语文老师">
+        </div>
+        <div class="form-group">
+          <label>参考角色 <span style="font-weight:400;color:#999">（可选）</span></label>
+          <div style="display:flex;gap:8px">
+            <input id="char-ref" placeholder="例如：红楼梦_林黛玉" style="flex:1">
+            <button id="ai-design-btn" class="btn btn-primary" onclick="handleAiDesign()" style="white-space:nowrap;background:linear-gradient(135deg,#a855f7,#8b5cf6)">✨ AI设计</button>
+          </div>
+          <p style="font-size:11px;color:#999;margin-top:4px">输入参考角色名后点击 AI设计，自动搜索并生成人设提示词</p>
+        </div>
+        <div class="form-group">
+          <label>人设提示词 <span style="color:#e74c3c">*</span></label>
+          <textarea id="char-prompt" rows="4" placeholder="描述角色的性格、语气、知识范围等"></textarea>
+        </div>
+        <div class="form-group">
+          <label>角色描述 <span style="font-weight:400;color:#999">（可选，显示在角色详情弹窗中）</span></label>
+          <textarea id="char-description" rows="3" placeholder="角色的简短介绍，如：一位严厉而温柔的语文老师"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>音色 ID（可选）</label>
+            <input id="char-speaker-id" placeholder="如：S_xxxxxxxx">
+          </div>
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <div></div>
+          </div>
+        </div>
+        <hr style="border:none;border-top:1px solid #eee;margin:12px 0">
+        <div class="form-group">
+          <label>立绘图片 *</label>
+          <input id="char-portrait-file" type="file" accept="image/*" onchange="previewPortrait(this)">
+          <div id="portrait-preview" style="margin-top:8px;max-width:120px;display:none">
+            <img style="width:100%;border-radius:8px;border:1px solid #eee">
+          </div>
+          <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:12px;color:#888;cursor:pointer">
+            <input type="checkbox" id="remove-bg-portrait" checked> 去除背景
+          </label>
+        </div>
+        <hr style="border:none;border-top:1px solid #eee;margin:12px 0">
+        <div class="form-group">
+          <label>表情差分图片（最多3张，可选，每张单独上传）</label>
+          <div id="expr-slots" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+            <div class="expr-slot" data-idx="0" style="width:100px;text-align:center">
+              <div style="width:100px;height:100px;border:2px dashed #ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:28px;cursor:pointer;background:#fafafa;overflow:hidden" onclick="clickExprUpload(0)">
+                <span class="expr-placeholder">+</span>
+                <img class="expr-img" style="display:none;width:100%;height:100%;object-fit:cover">
+              </div>
+              <div style="margin-top:4px;font-size:10px;color:#999">表情①</div>
+              <label style="display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;color:#888;cursor:pointer;margin-top:2px">
+                <input type="checkbox" class="expr-remove-bg" data-idx="0" checked> 去背景
+              </label>
+              <button class="expr-remove-btn" data-idx="0" style="display:none;margin-top:2px;font-size:10px;color:#e74c3c;background:none;border:none;cursor:pointer" onclick="removeExpr(0)">删除</button>
+            </div>
+            <div class="expr-slot" data-idx="1" style="width:100px;text-align:center">
+              <div style="width:100px;height:100px;border:2px dashed #ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:28px;cursor:pointer;background:#fafafa;overflow:hidden" onclick="clickExprUpload(1)">
+                <span class="expr-placeholder">+</span>
+                <img class="expr-img" style="display:none;width:100%;height:100%;object-fit:cover">
+              </div>
+              <div style="margin-top:4px;font-size:10px;color:#999">表情②</div>
+              <label style="display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;color:#888;cursor:pointer;margin-top:2px">
+                <input type="checkbox" class="expr-remove-bg" data-idx="1" checked> 去背景
+              </label>
+              <button class="expr-remove-btn" data-idx="1" style="display:none;margin-top:2px;font-size:10px;color:#e74c3c;background:none;border:none;cursor:pointer" onclick="removeExpr(1)">删除</button>
+            </div>
+            <div class="expr-slot" data-idx="2" style="width:100px;text-align:center">
+              <div style="width:100px;height:100px;border:2px dashed #ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:28px;cursor:pointer;background:#fafafa;overflow:hidden" onclick="clickExprUpload(2)">
+                <span class="expr-placeholder">+</span>
+                <img class="expr-img" style="display:none;width:100%;height:100%;object-fit:cover">
+              </div>
+              <div style="margin-top:4px;font-size:10px;color:#999">表情③</div>
+              <label style="display:flex;align-items:center;justify-content:center;gap:2px;font-size:10px;color:#888;cursor:pointer;margin-top:2px">
+                <input type="checkbox" class="expr-remove-bg" data-idx="2" checked> 去背景
+              </label>
+              <button class="expr-remove-btn" data-idx="2" style="display:none;margin-top:2px;font-size:10px;color:#e74c3c;background:none;border:none;cursor:pointer" onclick="removeExpr(2)">删除</button>
+            </div>
+          </div>
+          <input type="file" accept="image/*" id="expr-file-input" style="display:none">
+          <div class="form-group" style="margin-top:8px">
+            <label style="font-size:12px;color:#888">表情描述（每行一个，按顺序对应已上传的表情）</label>
+            <textarea id="expr-descriptions" rows="3" style="font-size:12px" placeholder="思考、疑惑&#10;开心、微笑&#10;生气、不满">思考、疑惑&#10;开心、微笑&#10;生气、不满</textarea>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:4px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:#888;cursor:pointer">
+              <input type="checkbox" id="auto-analyze"> AI自动分析表情
+            </label>
+          </div>
+        </div>
+        <hr style="border:none;border-top:1px solid #eee;margin:12px 0">
+        <div class="form-group">
+          <label>CG 图片（最多3张，可选）</label>
+          <div id="cg-slots" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+            <div class="cg-slot" data-idx="0" style="width:100px;text-align:center">
+              <div style="width:100px;height:100px;border:2px dashed #ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:28px;cursor:pointer;background:#fafafa;overflow:hidden" onclick="clickCgUpload(0)">
+                <span class="cg-placeholder">+</span>
+                <img class="cg-img" style="display:none;width:100%;height:100%;object-fit:cover">
+              </div>
+              <div style="margin-top:4px;font-size:10px;color:#999;margin-top:12px">CG①</div>
+              <button class="cg-remove-btn" data-idx="0" style="display:none;margin-top:2px;font-size:10px;color:#e74c3c;background:none;border:none;cursor:pointer" onclick="removeCg(0)">删除</button>
+            </div>
+            <div class="cg-slot" data-idx="1" style="width:100px;text-align:center">
+              <div style="width:100px;height:100px;border:2px dashed #ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:28px;cursor:pointer;background:#fafafa;overflow:hidden" onclick="clickCgUpload(1)">
+                <span class="cg-placeholder">+</span>
+                <img class="cg-img" style="display:none;width:100%;height:100%;object-fit:cover">
+              </div>
+              <div style="margin-top:4px;font-size:10px;color:#999;margin-top:12px">CG②</div>
+              <button class="cg-remove-btn" data-idx="1" style="display:none;margin-top:2px;font-size:10px;color:#e74c3c;background:none;border:none;cursor:pointer" onclick="removeCg(1)">删除</button>
+            </div>
+            <div class="cg-slot" data-idx="2" style="width:100px;text-align:center">
+              <div style="width:100px;height:100px;border:2px dashed #ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:28px;cursor:pointer;background:#fafafa;overflow:hidden" onclick="clickCgUpload(2)">
+                <span class="cg-placeholder">+</span>
+                <img class="cg-img" style="display:none;width:100%;height:100%;object-fit:cover">
+              </div>
+              <div style="margin-top:4px;font-size:10px;color:#999;margin-top:12px">CG③</div>
+              <button class="cg-remove-btn" data-idx="2" style="display:none;margin-top:2px;font-size:10px;color:#e74c3c;background:none;border:none;cursor:pointer" onclick="removeCg(2)">删除</button>
+            </div>
+          </div>
+          <input type="file" accept="image/*" id="cg-file-input" style="display:none">
+        </div>
+        <button class="btn btn-primary" onclick="addCharacter()" style="margin-top:8px">添加角色</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-bgm" class="tab-content">
+    <div class="card">
+      <div class="card-header">📋 背景音乐列表</div>
+      <div class="card-body" id="bgm-list">
+        <div class="empty">加载中...</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">📤 上传背景音乐</div>
+      <div class="card-body">
+        <div class="upload-area" id="upload-area" onclick="document.getElementById('bgm-file').click()">
+          <div style="font-size: 32px; color: #667eea;">📁</div>
+          <p>点击上传 WAV / MP3 / OGG / FLAC 文件</p>
+        </div>
+        <input id="bgm-file" type="file" accept=".wav,.mp3,.ogg,.flac" style="display:none" onchange="uploadBgm(this)">
+        <div style="margin-top:12px; display:none" id="upload-progress">
+          <div style="font-size:13px; color:#666;">上传中...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">提示</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-primary" onclick="closeModal()">确定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const BASE = '';
+
+function toast(msg, type) {
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type || 'success');
+  el.textContent = msg;
+  document.body.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 300); }, 2500);
+}
+
+function showModal(title, body) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = typeof body === 'string' ? body : body.innerHTML;
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+async function api(url, opts) {
+  const res = await fetch(BASE + url, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.detail || '请求失败');
+  return data;
+}
+
+async function loadCharacters() {
+  const el = document.getElementById('character-list');
+  try {
+    const res = await api('/admin/api/default-characters');
+    const chars = res.data;
+    if (!chars.length) {
+      el.innerHTML = '<div class="empty">暂无默认角色</div>';
+      return;
+    }
+    let html = '<table><thead><tr><th>名称</th><th>描述</th><th>提示词</th><th>立绘</th><th>操作</th></tr></thead><tbody>';
+    for (const c of chars) {
+      html += `<tr>
+        <td><strong>${esc(c.name)}</strong></td>
+        <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(c.description || '')}">${c.description ? esc(c.description) : '<span style="color:#ccc">-</span>'}</td>
+        <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(c.prompt)}">${esc(c.prompt)}</td>
+        <td>${c.portrait_url ? '<span class="badge badge-success">有</span>' : '<span class="badge">无</span>'}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="deleteCharacter(${c.id})">删除</button></td>
+      </tr>`;
+    }
+    html += '</tbody></table>';
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<div class="empty" style="color:#e74c3c;">加载失败: ' + esc(e.message) + '</div>';
+  }
+}
+
+async function handleAiDesign() {
+  const ref = document.getElementById('char-ref').value.trim();
+  if (!ref) { toast('请输入参考角色名', 'error'); return; }
+  const btn = document.getElementById('ai-design-btn');
+  const origText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '⏳ 搜索中...';
+  try {
+    const res = await fetch('/admin/api/characters/ai-design-prompt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reference_name: ref }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'AI设计失败');
+    document.getElementById('char-prompt').value = data.prompt;
+    toast('人设提示词已生成');
+  } catch (e) {
+    toast(e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = origText;
+  }
+}
+
+async function addCharacter() {
+  const name = document.getElementById('char-name').value.trim();
+  const prompt = document.getElementById('char-prompt').value.trim();
+  const description = document.getElementById('char-description').value.trim();
+  const speakerId = document.getElementById('char-speaker-id').value.trim();
+  const portraitInput = document.getElementById('char-portrait-file');
+  const removeBgPortrait = document.getElementById('remove-bg-portrait').checked;
+  const autoAnalyze = document.getElementById('auto-analyze').checked;
+  const exprDescText = document.getElementById('expr-descriptions').value.trim();
+
+  if (!name) { toast('请输入角色名称', 'error'); return; }
+  if (!prompt) { toast('请输入人设提示词', 'error'); return; }
+  if (!portraitInput.files || !portraitInput.files[0]) { toast('请上传立绘图片', 'error'); return; }
+
+  const fd = new FormData();
+  fd.append('name', name);
+  fd.append('prompt', prompt);
+  if (description) fd.append('description', description);
+  if (speakerId) fd.append('speaker_id', speakerId);
+  fd.append('portrait', portraitInput.files[0]);
+  fd.append('remove_bg_portrait', String(removeBgPortrait));
+
+  const exprInput = document.getElementById('expr-file-input');
+  const exprIndices = Object.keys(exprFiles).sort();
+  if (exprIndices.length) {
+    for (const idx of exprIndices) {
+      fd.append('expressions', exprFiles[idx]);
+    }
+    const bgCheckboxes = document.querySelectorAll('.expr-remove-bg');
+    const bgValues = Array.from(bgCheckboxes).map(cb => String(cb.checked)).join(',');
+    fd.append('remove_bg_expressions', bgValues);
+    const descs = exprDescText ? exprDescText.split('\n').map(s => s.trim()).filter(Boolean) : [];
+    if (descs.length) fd.append('expression_descriptions', JSON.stringify(descs));
+  }
+
+  fd.append('auto_analyze', String(autoAnalyze));
+
+  const cgIndices = Object.keys(cgFiles).sort();
+  if (cgIndices.length) {
+    for (const idx of cgIndices) {
+      fd.append('cg_images', cgFiles[idx]);
+    }
+  }
+
+  try {
+    const res = await fetch('/admin/api/default-characters', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || '创建失败');
+    toast('角色「' + data.name + '」创建成功');
+    clearCharacterForm();
+    loadCharacters();
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+async function deleteCharacter(id) {
+  if (!confirm('确定要删除这个默认角色吗？')) return;
+  try {
+    await api('/admin/api/default-characters/' + id, { method: 'DELETE' });
+    toast('角色已删除');
+    loadCharacters();
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+async function loadBgm() {
+  const el = document.getElementById('bgm-list');
+  try {
+    const res = await api('/admin/api/bgm');
+    const files = res.data;
+    if (!files.length) {
+      el.innerHTML = '<div class="empty">暂无背景音乐文件</div>';
+      return;
+    }
+    let html = '<table><thead><tr><th>文件名</th><th>显示名</th><th>大小</th><th>操作</th></tr></thead><tbody>';
+    for (const f of files) {
+      html += `<tr>
+        <td>${esc(f.filename)}</td>
+        <td>${esc(f.name)}</td>
+        <td>${f.size}MB</td>
+        <td>
+          <button class="btn btn-primary btn-sm" onclick="previewBgm('${esc(f.filename)}')">试听</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteBgm('${esc(f.filename)}')">删除</button>
+        </td>
+      </tr>`;
+    }
+    html += '</tbody></table>';
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<div class="empty" style="color:#e74c3c;">加载失败: ' + esc(e.message) + '</div>';
+  }
+}
+
+async function uploadBgm(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+  document.getElementById('upload-progress').style.display = 'block';
+  const fd = new FormData();
+  fd.append('file', file);
+  try {
+    await api('/admin/api/bgm/upload', { method: 'POST', body: fd });
+    toast('上传成功: ' + file.name);
+    input.value = '';
+    loadBgm();
+  } catch (e) {
+    toast(e.message, 'error');
+  } finally {
+    document.getElementById('upload-progress').style.display = 'none';
+  }
+}
+
+async function deleteBgm(filename) {
+  if (!confirm('确定要删除 ' + filename + ' 吗？')) return;
+  try {
+    await api('/admin/api/bgm/' + encodeURIComponent(filename), { method: 'DELETE' });
+    toast('BGM 已删除');
+    loadBgm();
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+async function previewBgm(filename) {
+  const url = BASE + '/admin/api/bgm/' + encodeURIComponent(filename);
+  showModal('试听: ' + filename,
+    '<audio src="' + url + '" controls style="width:100%;" autoplay></audio>'
+  );
+}
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function previewPortrait(input) {
+  const container = document.getElementById('portrait-preview');
+  const img = container.querySelector('img');
+  if (input.files?.[0]) {
+    const url = URL.createObjectURL(input.files[0]);
+    img.src = url;
+    container.style.display = 'block';
+  } else {
+    container.style.display = 'none';
+  }
+}
+
+const exprFiles = {};
+const cgFiles = {};
+
+function clickExprUpload(idx) {
+  const input = document.getElementById('expr-file-input');
+  input.dataset.targetIdx = idx;
+  input.click();
+}
+
+document.getElementById('expr-file-input').addEventListener('change', function() {
+  const idx = parseInt(this.dataset.targetIdx);
+  const file = this.files?.[0];
+  if (!file) return;
+
+  exprFiles[idx] = file;
+
+  const slot = document.querySelector(`.expr-slot[data-idx="${idx}"]`);
+  const placeholder = slot.querySelector('.expr-placeholder');
+  const img = slot.querySelector('.expr-img');
+  const removeBtn = slot.querySelector('.expr-remove-btn');
+
+  placeholder.style.display = 'none';
+  img.style.display = 'block';
+  img.src = URL.createObjectURL(file);
+  removeBtn.style.display = 'inline';
+
+  this.value = '';
+});
+
+function removeExpr(idx) {
+  delete exprFiles[idx];
+
+  const slot = document.querySelector(`.expr-slot[data-idx="${idx}"]`);
+  const placeholder = slot.querySelector('.expr-placeholder');
+  const img = slot.querySelector('.expr-img');
+  const removeBtn = slot.querySelector('.expr-remove-btn');
+
+  placeholder.style.display = 'inline';
+  img.style.display = 'none';
+  img.src = '';
+  removeBtn.style.display = 'none';
+}
+
+function clickCgUpload(idx) {
+  const input = document.getElementById('cg-file-input');
+  input.dataset.targetIdx = idx;
+  input.click();
+}
+
+document.getElementById('cg-file-input').addEventListener('change', function() {
+  const idx = parseInt(this.dataset.targetIdx);
+  const file = this.files?.[0];
+  if (!file) return;
+
+  cgFiles[idx] = file;
+
+  const slot = document.querySelector(`.cg-slot[data-idx="${idx}"]`);
+  const placeholder = slot.querySelector('.cg-placeholder');
+  const img = slot.querySelector('.cg-img');
+  const removeBtn = slot.querySelector('.cg-remove-btn');
+
+  placeholder.style.display = 'none';
+  img.style.display = 'block';
+  img.src = URL.createObjectURL(file);
+  removeBtn.style.display = 'inline';
+
+  this.value = '';
+});
+
+function removeCg(idx) {
+  delete cgFiles[idx];
+
+  const slot = document.querySelector(`.cg-slot[data-idx="${idx}"]`);
+  const placeholder = slot.querySelector('.cg-placeholder');
+  const img = slot.querySelector('.cg-img');
+  const removeBtn = slot.querySelector('.cg-remove-btn');
+
+  placeholder.style.display = 'inline';
+  img.style.display = 'none';
+  img.src = '';
+  removeBtn.style.display = 'none';
+}
+
+function clearCharacterForm() {
+  document.getElementById('char-name').value = '';
+  document.getElementById('char-prompt').value = '';
+  document.getElementById('char-description').value = '';
+  document.getElementById('char-ref').value = '';
+  document.getElementById('char-speaker-id').value = '';
+  document.getElementById('char-portrait-file').value = '';
+  document.getElementById('portrait-preview').style.display = 'none';
+  document.getElementById('expr-file-input').value = '';
+
+  for (const idx of [0, 1, 2]) {
+    delete exprFiles[idx];
+    removeExpr(idx);
+  }
+  for (const idx of [0, 1, 2]) {
+    delete cgFiles[idx];
+    removeCg(idx);
+  }
+}
+
+loadCharacters();
+loadBgm();
+</script>
+</body>
+</html>

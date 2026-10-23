@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Automation Agent Plugin</string>
+    <string name="accessibility_service_description">Enables the Automation Agent to inspect the current UI and perform automated actions such as tapping, swiping, and typing. This is required for app automation features.</string>
+</resources>

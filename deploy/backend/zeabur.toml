@@ -1,0 +1,59 @@
+name = "智能学习平台后端"
+region = "sgp1"
+
+[services.api]
+name = "backend"
+source = "upload"
+type = "python"
+directory = "."
+
+[services.api.env]
+PORT = "8080"
+ENVIRONMENT = "production"
+
+# === AI ===
+DEEPSEEK_API_KEYS_STR = "你的 DeepSeek API Key，多个用逗号分隔"
+DEEPSEEK_BASE_URL = "https://api.deepseek.com/v1"
+MINICPM_API_KEY = "（可选）MiniCPM API Key"
+MINICPM_BASE_URL = "https://api.modelbest.cn/v1"
+
+# === 文档解析 SoMark ===
+# 从 https://somark.cn 获取
+SOMARK_API_KEYS_STR = "你的 SoMark API Key"
+SOMARK_BASE_URL = "https://api.somark.cn/v1"
+
+# === TTS 语音 ===
+TTS_APP_ID = "火山引擎 TTS App ID"
+TTS_ACCESS_TOKEN = "火山引擎 TTS Access Token"
+
+# === 火山引擎（图片生成 / 其他） ===
+ARK_API_KEY = "火山引擎 ARK API Key"
+
+# === 数据库 ===
+# 强烈建议使用 Zeabur 提供的 PostgreSQL，免费额度足够
+# DATABASE_URL = "postgresql://user:password@host:5432/dbname"
+# SQLite 仅在测试/单实例 Zeabur 中可用，重启后数据会丢失
+DATABASE_URL = "sqlite:///./learning.db"
+
+# === JWT ===
+# 任意长随机字符串，用于签名登录 Token
+# 可通过 openssl rand -hex 32 生成
+SECRET_KEY = "your-secret-key-change-in-production-1234567890"
+
+# === CORS ===
+# 前端部署域名（Zeabur 部署后自动生成 .zeabur.app 域名）
+CORS_ORIGINS = "http://localhost:5173,capacitor://localhost,https://你的前端域名.zeabur.app"
+
+# === 邮箱（可选，用于验证码） ===
+EMAIL_HOST = "smtp.qq.com"
+EMAIL_PORT = "465"
+EMAIL_USER = "yibianguo@foxmail.com"
+# 在 Zeabur 后台设置真正的 SMTP 授权码
+EMAIL_PASS = ""
+
+# === 其他 ===
+HF_ENDPOINT = "https://mirrors.cloud.tencent.com/huggingface/"
+REMBG_SERVICE_URL = "http://rembg-service-1.zeabur.internal:8081"
+
+[services.api.run]
+command = "bash .zeabur/install_deps.sh && uvicorn main:app --host 0.0.0.0 --port 8080 --workers 2"

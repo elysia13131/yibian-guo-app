@@ -1,0 +1,144 @@
+{
+	"Version": 3,
+	"FileReferences": {
+		"Moc": "cat.moc3",
+		"Textures": [
+			"cat.2048/texture_00.png",
+			"cat.2048/texture_01.png"
+		],
+		"Physics": "cat.physics3.json",
+		"DisplayInfo": "cat.cdi3.json",
+		"Expressions": [
+			{
+				"Name": "Live2d_expression0",
+				"File": "Live2d_expression0.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression01",
+				"File": "Live2d_expression01.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression02",
+				"File": "Live2d_expression02.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression03",
+				"File": "Live2d_expression03.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression04",
+				"File": "Live2d_expression04.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression05",
+				"File": "Live2d_expression05.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression06",
+				"File": "Live2d_expression06.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression07",
+				"File": "Live2d_expression07.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression08",
+				"File": "Live2d_expression08.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression09",
+				"File": "Live2d_expression09.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression010",
+				"File": "Live2d_expression010.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression011",
+				"File": "Live2d_expression011.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression012",
+				"File": "Live2d_expression012.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression013",
+				"File": "Live2d_expression013.exp3.json"
+			},
+			{
+				"Name": "Live2d_expression014",
+				"File": "Live2d_expression014.exp3.json"
+			}
+		],
+		"Motions": {
+			"CAT_motion": [
+				{
+					"File": "Live2d_motion1.motion3.json",
+					"FadeInTime": 0,
+					"FadeOutTime": 0
+				},
+				{
+					"File": "Live2d_motion2.motion3.json",
+					"FadeInTime": 0,
+					"FadeOutTime": 0
+				},
+				{
+					"File": "Live2d_motion3.motion3.json",
+					"FadeInTime": 0,
+					"FadeOutTime": 0
+				},
+				{
+					"File": "Live2d_motion4.motion3.json",
+					"FadeInTime": 0,
+					"FadeOutTime": 0
+				},
+				{
+					"File": "Live2d_motion5.motion3.json",
+					"FadeInTime": 0,
+					"FadeOutTime": 0
+				},
+				{
+					"File": "Live2d_motion6.motion3.json",
+					"FadeInTime": 0,
+					"FadeOutTime": 0
+				},
+				{
+					"File": "Live2d_motion7.motion3.json",
+					"FadeInTime": 0,
+					"FadeOutTime": 0
+				},
+				{
+					"File": "Live2d_motion8.motion3.json",
+					"FadeInTime": 0,
+					"FadeOutTime": 0
+				},
+				{
+					"File": "Live2d_motion9.motion3.json",
+					"FadeInTime": 0,
+					"FadeOutTime": 0
+				},
+				{
+					"File": "Live2d_motion10.motion3.json",
+					"FadeInTime": 0,
+					"FadeOutTime": 0
+				}
+			]
+		}
+	},
+	"Groups": [
+		{
+			"Target": "Parameter",
+			"Name": "EyeBlink",
+			"Ids": [
+				"ParamEyeLOpen",
+				"ParamEyeROpen"
+			]
+		},
+		{
+			"Target": "Parameter",
+			"Name": "LipSync",
+			"Ids": []
+		}
+	],
+	"HitAreas": []
+}
