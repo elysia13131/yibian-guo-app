@@ -1,5 +1,7 @@
 # 部署说明文档
 
+> 仓库区分：本仓库（`yibian-guo-app`）是完整源码仓库；线上部署使用独立的私有仓库 `yibian-guo-backend`，由本仓库的 `deploy/backend/` 目录同步而来，仅承担 Zeabur 构建发布，请勿在该仓库中开发。
+
 ## 项目结构
 
 ```
